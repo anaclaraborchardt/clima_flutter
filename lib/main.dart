@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key});
@@ -39,13 +42,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      debugPrint(response.body);
       final cityId = data[0]['id'];
 
       final response2 = await http.put(
         Uri.parse(
             'http://apiadvisor.climatempo.com.br/api-manager/user-token/$token/locales'),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
+        headers: {
+          HttpHeaders.authorizationHeader: token,
         },
         body: <String, String>{
           'localeId[]': '$cityId',
@@ -102,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
