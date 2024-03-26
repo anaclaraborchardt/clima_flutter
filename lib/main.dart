@@ -8,7 +8,6 @@ void main() {
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key});
 
@@ -36,43 +35,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String _weatherData = '';
 
   Future<void> _fetchWeatherData(String cityName) async {
-    const String token = "4c1bc488751e8305c560d1f5b322357a";
+    const String token = "Q4X3V73L985XDYBA33J6SBJSV";
     final response = await http.get(Uri.parse(
-        'http://apiadvisor.climatempo.com.br/api/v1/locale/city?name=$cityName&token=$token'));
+        'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/$cityName?key=$token'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       debugPrint(response.body);
-      final cityId = data[0]['id'];
-
-      final response2 = await http.put(
-        Uri.parse(
-            'http://apiadvisor.climatempo.com.br/api-manager/user-token/$token/locales'),
-        headers: {
-          HttpHeaders.authorizationHeader: token,
-        },
-        body: <String, String>{
-          'localeId[]': '$cityId',
-        },
-      );
-
-      if (response2.statusCode == 200) {
-        final response3 = await http.get(Uri.parse(
-            'http://apiadvisor.climatempo.com.br/api/v1/weather/locale/$cityId/current?token=$token'));
-
-        if (response3.statusCode == 200) {
-          final weatherData = jsonDecode(response3.body);
-          setState(() {
-            _weatherData = weatherData.toString();
-          });
-        } else {
-          throw Exception('Failed to load weather data');
-        }
-      } else {
-        throw Exception('Failed to set user token');
-      }
-    } else {
-      throw Exception('Failed to fetch city data');
     }
   }
 
@@ -80,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red,
         title: const Text('Weather App'),
       ),
       body: Padding(
@@ -90,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
             TextField(
               controller: _cityController,
               decoration: const InputDecoration(labelText: 'City Name'),
-            ),
+            ),  
             ElevatedButton(
               onPressed: () {
                 final cityName = _cityController.text.trim();
